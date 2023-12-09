@@ -11,26 +11,33 @@ namespace RealEstateApi.Controllers
         readonly ApiDbContext _context = new();
 
         [HttpGet]
-        public IEnumerable<Category> List()
+        public IActionResult List()
         {
-            return _context.Categories;
+            return StatusCode(StatusCodes.Status200OK, _context.Categories);
         }
 
         [HttpPost]
-        public void Create([FromBody] Category category)
+        public IActionResult Create([FromBody] Category category)
         {
             _context.Categories.Add(category);
             _context.SaveChanges();
+            return StatusCode(StatusCodes.Status200OK, "Category has been created");
         }
 
         [HttpGet("{id}")]
-        public Category Read(int id)
+        public IActionResult Read(int id)
         {
-            return _context.Categories.FirstOrDefault(c => c.Id == id);
+            var tempCategory = _context.Categories.FirstOrDefault(c => c.Id == id);
+            if(tempCategory != null)
+            {
+                return StatusCode(StatusCodes.Status200OK, tempCategory);
+            }
+
+            return StatusCode(StatusCodes.Status404NotFound);
         }
 
         [HttpPut("{id}")]
-        public void Update(int id, [FromBody] Category category)
+        public IActionResult Update(int id, [FromBody] Category category)
         {
             var tempCategory = _context.Categories.Find(id);
             if(tempCategory != null)
@@ -39,18 +46,24 @@ namespace RealEstateApi.Controllers
                 tempCategory.Description = category.Description;
                 tempCategory.ImageUrl = category.ImageUrl;
                 _context.SaveChanges();
+                return StatusCode(StatusCodes.Status200OK, "Category has been updated");
             }
+
+            return StatusCode(StatusCodes.Status404NotFound);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
             var tempCategory = _context.Categories.Find(id);
             if (tempCategory != null)
             {
                 _context.Categories.Remove(tempCategory);
-                _context.SaveChanges();
+                _context.SaveChanges(); 
+                return StatusCode(StatusCodes.Status200OK, "Category has been deleted");
             }
+
+            return StatusCode(StatusCodes.Status404NotFound);
         }
     }
 }
