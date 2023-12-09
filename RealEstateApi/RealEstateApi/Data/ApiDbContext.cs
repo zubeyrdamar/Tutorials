@@ -10,6 +10,8 @@ namespace RealEstateApi.Data
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=db_realestate");
         }
 
+        public DbSet<User> Users { get; set; }
+        public DbSet<Property> Properties { get; set; }
         public DbSet<Category> Categories { get; set; }
     }
 }
