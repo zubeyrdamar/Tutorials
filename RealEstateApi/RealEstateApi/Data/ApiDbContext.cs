@@ -7,7 +7,7 @@ namespace RealEstateApi.Data
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server:(localdb)\MSSQLLocalDB;Database=db_realestate");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=db_realestate");
         }
 
         public DbSet<Category> Categories { get; set; }
