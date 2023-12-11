@@ -12,7 +12,7 @@ using Walks.API.Data;
 namespace Walks.API.Migrations
 {
     [DbContext(typeof(WalksDbContext))]
-    [Migration("20231211004250_InitialCreate")]
+    [Migration("20231211155126_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

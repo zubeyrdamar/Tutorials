@@ -29,9 +29,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
+
+DatabaseSeeder.Seed(app);
 
 app.Run();
