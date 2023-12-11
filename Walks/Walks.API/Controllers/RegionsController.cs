@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Walks.API.Data;
+using Walks.API.Models;
+using Walks.API.Models.DTO;
 
 namespace Walks.API.Controllers
 {
@@ -7,10 +9,48 @@ namespace Walks.API.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
+        private readonly WalksDbContext _context;
+        public RegionsController(WalksDbContext context) {
+            _context = context;
+        }
+
         [HttpGet]
         public IActionResult List()
         {
+            var regions = _context.Regions.ToList();
+            var regionsDTO = new List<RegionDTO>();
+            foreach(var region in regions)
+            {
+                regionsDTO.Add(new RegionDTO()
+                {
+                    Code = region.Code,
+                    Name = region.Name,
+                });
+            }
+
+            return Ok(regionsDTO);
+        }
+
+        [HttpPost]
+        public IActionResult Create(Region region)
+        {
+            _context.Regions.Add(region);
+            _context.SaveChanges();
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public IActionResult Read([FromRoute] Guid id) 
+        {
+            var region = _context.Regions.Find(id);
+            if(region == null) { return NotFound(); }
+            var regionDTO = new RegionDTO()
+            {
+                Code = region.Code,
+                Name = region.Name,
+            };
+            return Ok(regionDTO);
         }
     }
 }
