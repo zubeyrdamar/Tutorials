@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Walks.API.Data;
 using Walks.API.Models;
 using Walks.API.Models.DTO;
+using Walks.API.Repositories;
 
 namespace Walks.API.Controllers
 {
@@ -10,14 +12,16 @@ namespace Walks.API.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly WalksDbContext _context;
-        public RegionsController(WalksDbContext context) {
+        private readonly IRegionRepository _regionRepository;
+        public RegionsController(WalksDbContext context, IRegionRepository regionRepository) {
             _context = context;
+            _regionRepository = regionRepository;
         }
 
         [HttpGet]
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
-            var regions = _context.Regions.ToList();
+            var regions = await _regionRepository.List();
             var regionsDTO = new List<RegionDTO>();
             foreach(var region in regions)
             {
@@ -32,18 +36,18 @@ namespace Walks.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Region region)
+        public async Task<IActionResult> Create(Region region)
         {
-            _context.Regions.Add(region);
-            _context.SaveChanges();
+            await _context.Regions.AddAsync(region);
+            await _context.SaveChangesAsync();
             return Ok();
         }
 
         [HttpGet]
         [Route("{id:Guid}")]
-        public IActionResult Read([FromRoute] Guid id) 
+        public async Task<IActionResult> Read([FromRoute] Guid id) 
         {
-            var region = _context.Regions.Find(id);
+            var region = await _context.Regions.FindAsync(id);
             if(region == null) { return NotFound(); }
             var regionDTO = new RegionDTO()
             {
@@ -55,29 +59,29 @@ namespace Walks.API.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionDTO regionDTO) 
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionDTO regionDTO) 
         {
-            var region = _context.Regions.FirstOrDefault(r => r.Id == id);
+            var region = await _context.Regions.FirstOrDefaultAsync(r => r.Id == id);
             if(region == null) { return NotFound(); }
 
             region.Name = regionDTO.Name;
             region.Code = regionDTO.Code;
             region.ImageUrl = regionDTO.ImageUrl;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(region);
         }
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var region = _context.Regions.FirstOrDefault(r => r.Id == id);
+            var region = await _context.Regions.FirstOrDefaultAsync(r => r.Id == id);
             if (region == null) { return NotFound(); }
 
             _context.Regions.Remove(region);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return Ok(region);
         }
     }
