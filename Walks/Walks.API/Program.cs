@@ -16,6 +16,7 @@ builder.Services.AddDbContext<WalksDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Walks"))
 );
 
+builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
