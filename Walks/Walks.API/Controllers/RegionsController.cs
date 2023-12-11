@@ -40,7 +40,7 @@ namespace Walks.API.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id:Guid}")]
         public IActionResult Read([FromRoute] Guid id) 
         {
             var region = _context.Regions.Find(id);
@@ -51,6 +51,34 @@ namespace Walks.API.Controllers
                 Name = region.Name,
             };
             return Ok(regionDTO);
+        }
+
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionDTO regionDTO) 
+        {
+            var region = _context.Regions.FirstOrDefault(r => r.Id == id);
+            if(region == null) { return NotFound(); }
+
+            region.Name = regionDTO.Name;
+            region.Code = regionDTO.Code;
+            region.ImageUrl = regionDTO.ImageUrl;
+
+            _context.SaveChanges();
+
+            return Ok(region);
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public IActionResult Delete([FromRoute] Guid id)
+        {
+            var region = _context.Regions.FirstOrDefault(r => r.Id == id);
+            if (region == null) { return NotFound(); }
+
+            _context.Regions.Remove(region);
+            _context.SaveChanges();
+            return Ok(region);
         }
     }
 }
