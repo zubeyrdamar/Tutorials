@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Walks.API.Models;
 using Walks.API.Models.DTO;
 using Walks.API.Repositories;
@@ -10,32 +11,28 @@ namespace Walks.API.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;
-        public RegionsController(IRegionRepository regionRepository) {
+        private readonly IMapper _mapper;
+
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper) {
             _regionRepository = regionRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> List()
         {
             var regions = await _regionRepository.ListAsync();
-            var regionsDTO = new List<RegionDTO>();
-            foreach(var region in regions)
-            {
-                regionsDTO.Add(new RegionDTO()
-                {
-                    Code = region.Code,
-                    Name = region.Name,
-                });
-            }
+            var regionsDTO = _mapper.Map<List<RegionDTO>>(regions);
 
             return Ok(regionsDTO);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Region region)
+        public async Task<IActionResult> Create(CreateRegionDTO regionDTO)
         {
-            var tempRegion = await _regionRepository.CreateAsync(region);
-            return Ok(tempRegion);
+            var region = _mapper.Map<Region>(regionDTO);
+            region = await _regionRepository.CreateAsync(region);
+            return Ok(_mapper.Map<RegionDTO>(region));
         }
 
         [HttpGet]
@@ -44,11 +41,7 @@ namespace Walks.API.Controllers
         {
             var region = await _regionRepository.ReadAsync(id);
             if(region == null) { return NotFound(); }
-            var regionDTO = new RegionDTO()
-            {
-                Code = region.Code,
-                Name = region.Name,
-            };
+            var regionDTO = _mapper.Map<RegionDTO>(region);
             return Ok(regionDTO);
         }
 
@@ -56,10 +49,10 @@ namespace Walks.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionDTO regionDTO) 
         {
-            var region = await _regionRepository.UpdateAsync(id, regionDTO);
+            var region = _mapper.Map<Region>(regionDTO);
+            region = await _regionRepository.UpdateAsync(id, region);
             if(region == null) { return NotFound(); }
-
-            return Ok(region);
+            return Ok(_mapper.Map<RegionDTO>(region));
         }
 
         [HttpDelete]
@@ -67,8 +60,9 @@ namespace Walks.API.Controllers
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var region = await _regionRepository.DeleteAsync(id);
-            if(region == null) { return NotFound(); } 
-            return Ok(region);
+            if(region == null) { return NotFound(); }
+            var regionDTO = _mapper.Map<Region>(region);
+            return Ok(regionDTO);
         }
     }
 }

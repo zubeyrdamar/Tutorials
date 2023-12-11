@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Walks.API.Data;
 using Walks.API.Models;
-using Walks.API.Models.DTO;
 
 namespace Walks.API.Repositories
 {
@@ -30,20 +29,20 @@ namespace Walks.API.Repositories
             return await _context.Regions.FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public async Task<Region?> UpdateAsync(Guid id, UpdateRegionDTO regionDTO)
+        public async Task<Region?> UpdateAsync(Guid id, Region region)
         {
-            var region = await _context.Regions.FirstOrDefaultAsync(r => r.Id == id);
-            if (region == null)
+            var tempRegion = await _context.Regions.FirstOrDefaultAsync(r => r.Id == id);
+            if (tempRegion == null)
             {
                 return null;
             }
 
-            region.Code = regionDTO.Code;
-            region.Name = regionDTO.Name;
-            region.ImageUrl = regionDTO.ImageUrl;
+            tempRegion.Code = region.Code;
+            tempRegion.Name = region.Name;
+            tempRegion.ImageUrl = region.ImageUrl;
             await _context.SaveChangesAsync();
 
-            return region;
+            return tempRegion;
         }
 
         public async Task<Region?> DeleteAsync(Guid id)
