@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Walks.API.Data;
 using Walks.API.Models;
 
@@ -12,9 +13,14 @@ namespace Walks.API.Repositories
             this.context = context;
         }
 
-        public async Task<List<Walk>> ListAsync(string filterOn = null, string filterQuery = null)
+        public async Task<List<Walk>> ListAsync(
+            string filterOn = null, string filterQuery = null,
+            string sortBy = null, bool isAscending = true
+        )
         {
             var walks = context.Walks.Include(w => w.Difficulty).Include(w => w.Region).AsQueryable();
+
+            // Filtering
             if(string.IsNullOrEmpty(filterOn) == false && string.IsNullOrEmpty(filterQuery) == false) 
             {
                 if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
@@ -22,6 +28,16 @@ namespace Walks.API.Repositories
                     walks = walks.Where(w => w.Name.Contains(filterQuery));
                 }
             }
+
+            // Sorting
+            if(string.IsNullOrEmpty(sortBy) == false)
+            {
+                if(sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending ? walks.OrderBy(w => w.Name) : walks.OrderByDescending(w => w.Name);
+                }
+            }
+
             return await walks.ToListAsync();
         }
 

@@ -20,9 +20,12 @@ namespace Walks.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> List([FromQuery] string filterOn, [FromQuery] string filterQuery) 
+        public async Task<IActionResult> List(
+            [FromQuery] string filterOn, [FromQuery] string filterQuery,
+            [FromQuery] string sortBy, [FromQuery] bool isAscending
+        ) 
         {
-            var walks = await repository.ListAsync(filterOn, filterQuery);
+            var walks = await repository.ListAsync(filterOn, filterQuery, sortBy, isAscending);
             return Ok(mapper.Map<List<WalkDTO>>(walks));
         }
 
