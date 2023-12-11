@@ -30,6 +30,7 @@ namespace Walks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateRegionDTO regionDTO)
         {
+            if(!ModelState.IsValid) { return BadRequest(ModelState); }
             var region = _mapper.Map<Region>(regionDTO);
             region = await _regionRepository.CreateAsync(region);
             return Ok(_mapper.Map<RegionDTO>(region));
