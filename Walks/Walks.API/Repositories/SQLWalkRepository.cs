@@ -15,7 +15,8 @@ namespace Walks.API.Repositories
 
         public async Task<List<Walk>> ListAsync(
             string filterOn = null, string filterQuery = null,
-            string sortBy = null, bool isAscending = true
+            string sortBy = null, bool isAscending = true,
+            int pageNumber = 1, int pageSize = 20
         )
         {
             var walks = context.Walks.Include(w => w.Difficulty).Include(w => w.Region).AsQueryable();
@@ -38,7 +39,10 @@ namespace Walks.API.Repositories
                 }
             }
 
-            return await walks.ToListAsync();
+            // Pagination
+            var skipResults = (pageNumber - 1) * pageSize;
+
+            return await walks.Skip(skipResults).Take(pageSize).ToListAsync();
         }
 
         public async Task<Walk> CreateAsync(Walk walk)
