@@ -22,10 +22,11 @@ namespace Walks.API.Controllers
         [HttpGet]
         public async Task<IActionResult> List(
             [FromQuery] string filterOn, [FromQuery] string filterQuery,
-            [FromQuery] string sortBy, [FromQuery] bool isAscending
+            [FromQuery] string sortBy, [FromQuery] bool isAscending,
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20
         ) 
         {
-            var walks = await repository.ListAsync(filterOn, filterQuery, sortBy, isAscending);
+            var walks = await repository.ListAsync(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize);
             return Ok(mapper.Map<List<WalkDTO>>(walks));
         }
 
