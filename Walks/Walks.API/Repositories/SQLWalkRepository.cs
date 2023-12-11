@@ -12,9 +12,17 @@ namespace Walks.API.Repositories
             this.context = context;
         }
 
-        public async Task<List<Walk>> ListAsync()
+        public async Task<List<Walk>> ListAsync(string filterOn = null, string filterQuery = null)
         {
-            return await context.Walks.Include(w => w.Difficulty).Include(w => w.Region).ToListAsync();
+            var walks = context.Walks.Include(w => w.Difficulty).Include(w => w.Region).AsQueryable();
+            if(string.IsNullOrEmpty(filterOn) == false && string.IsNullOrEmpty(filterQuery) == false) 
+            {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(w => w.Name.Contains(filterQuery));
+                }
+            }
+            return await walks.ToListAsync();
         }
 
         public async Task<Walk> CreateAsync(Walk walk)
