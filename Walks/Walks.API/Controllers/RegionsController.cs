@@ -14,18 +14,24 @@ namespace Walks.API.Controllers
     {
         private readonly IRegionRepository _regionRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<RegionsController> _logger;
 
-        public RegionsController(IRegionRepository regionRepository, IMapper mapper) {
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper, ILogger<RegionsController> logger) {
             _regionRepository = regionRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
         [Authorize(Roles = "Reader")]
         public async Task<IActionResult> List()
         {
+            _logger.LogInformation("Listing Regions");
+
             var regions = await _regionRepository.ListAsync();
             var regionsDTO = _mapper.Map<List<RegionDTO>>(regions);
+
+            _logger.LogInformation("Listed Regions");
 
             return Ok(regionsDTO);
         }

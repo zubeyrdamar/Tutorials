@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 using Walks.API.Data;
 using Walks.API.Mappings;
@@ -13,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+var logger = new LoggerConfiguration().WriteTo.File("Logs/Walks_Log.txt", rollingInterval: RollingInterval.Day).MinimumLevel.Information().CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 
@@ -20,8 +25,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Walks API", Version = "v1" });
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Walks API", Version = "v1" });
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         Name = "Authorization",
         In = ParameterLocation.Header,
