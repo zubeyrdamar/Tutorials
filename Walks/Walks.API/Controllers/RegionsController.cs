@@ -26,6 +26,7 @@ namespace Walks.API.Controllers
         [Authorize(Roles = "Reader")]
         public async Task<IActionResult> List()
         {
+            throw new Exception("This is an exception");
             _logger.LogInformation("Listing Regions");
 
             var regions = await _regionRepository.ListAsync();

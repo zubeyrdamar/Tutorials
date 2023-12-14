@@ -8,6 +8,7 @@ using Serilog;
 using System.Text;
 using Walks.API.Data;
 using Walks.API.Mappings;
+using Walks.API.Middlewares;
 using Walks.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -105,6 +106,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
