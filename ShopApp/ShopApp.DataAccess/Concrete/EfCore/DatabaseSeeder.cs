@@ -21,6 +21,11 @@ namespace ShopApp.DataAccess.Concrete.EfCore
                     context.Products.AddRange(Products);
                 }
 
+                if(!context.ProductCategories.Any())
+                {
+                    context.ProductCategories.AddRange(ProductCategories);
+                }
+
                 context.SaveChanges();
             }
         }
@@ -37,6 +42,14 @@ namespace ShopApp.DataAccess.Concrete.EfCore
             new() { Name = "Samsung Galaxy S11", Price = 600, ImageUrl = "s11.png" },
             new() { Name = "Iphone 12", Price = 700, ImageUrl = "i12.png" },
             new() { Name = "Iphone 14 Max", Price = 1000, ImageUrl = "i14max.png" },
+        ];
+
+        private static readonly ProductCategory[] ProductCategories = [
+            new() { CategoryId = 1, ProductId = 1 },
+            new() { CategoryId = 1, ProductId = 2 },
+            new() { CategoryId = 2, ProductId = 2 },
+            new() { CategoryId = 2, ProductId = 3 },
+            new() { CategoryId = 2, ProductId = 4 },
         ];
     }
 }

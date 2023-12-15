@@ -22,6 +22,11 @@ namespace ShopApp.Business.Concrete
             return productRepository.Read(id);
         }
 
+        public Product Details(int id)
+        {
+            return productRepository.Details(id);
+        }
+
         public void Create(Product product)
         {
             productRepository.Create(product);
