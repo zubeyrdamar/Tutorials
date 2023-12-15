@@ -4,7 +4,7 @@ using ShopApp.Entities;
 
 namespace ShopApp.DataAccess.Concrete.EFCore
 {
-    internal class EfCoreProductRepository : EfCoreGenericRepository<Product, ShopDbContext>, IProductRepository
+    public class EfCoreProductRepository : EfCoreGenericRepository<Product, ShopDbContext>, IProductRepository
     {
         
     }
