@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Abstract\" />
-    <Folder Include="Concrete\" />
+    <ProjectReference Include="..\ShopApp.DataAccess\ShopApp.DataAccess.csproj" />
+    <ProjectReference Include="..\ShopApp.Entities\ShopApp.Entities.csproj" />
   </ItemGroup>
 
 </Project>
