@@ -43,5 +43,10 @@ namespace ShopApp.DataAccess.Concrete.Memory
         {
             throw new NotImplementedException();
         }
+
+        public Product Details(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
