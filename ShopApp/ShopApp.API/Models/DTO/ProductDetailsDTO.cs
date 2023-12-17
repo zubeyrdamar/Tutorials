@@ -1,6 +1,4 @@
-﻿using ShopApp.Entities;
-
-namespace ShopApp.API.Models.DTO
+﻿namespace ShopApp.API.Models.DTO
 {
     public class ProductDetailsDTO
     {
