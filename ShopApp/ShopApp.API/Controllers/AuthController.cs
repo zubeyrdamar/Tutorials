@@ -37,7 +37,14 @@ namespace ShopApp.API.Controllers
             var result = await userManager.CreateAsync(user, registerDTO.Password);
             if(result.Succeeded)
             {
-                return Ok(user);
+                var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                var callbackUrl = Url.Action("ConfirmEmail", "Auth", new
+                {
+                    UserId = user.Id,
+                    Token = token
+                });
+
+                return Ok(callbackUrl);
             }
 
             return BadRequest(ModelState);
@@ -58,6 +65,11 @@ namespace ShopApp.API.Controllers
                 return BadRequest("User does not exist");
             }
 
+            if(!await userManager.IsEmailConfirmedAsync(user))
+            {
+                return BadRequest("Email is not confirmed");
+            }
+
             var result = await signInManager.PasswordSignInAsync(loginDTO.Username, loginDTO.Password, false, false);
             if (result.Succeeded)
             {
@@ -73,6 +85,47 @@ namespace ShopApp.API.Controllers
         {
             await signInManager.SignOutAsync();
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("get/confirmation/url")]
+        public async Task<IActionResult> CorfirmationUrl(EmailConfirmationDTO emailConfirmationDTO)
+        {
+            var user = await userManager.FindByNameAsync(emailConfirmationDTO.Username);
+            if(user == null) { return NotFound(); }
+
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action("ConfirmEmail", "Auth", new
+            {
+                UserId = user.Id,
+                Token = token
+            });
+
+            return Ok(callbackUrl);
+        }
+
+        [HttpPost]
+        [Route("confirm/email")]
+        public async Task<IActionResult> ConfirmEmail(string UserId, string Token)
+        {
+            if(UserId == null || Token == null)
+            {
+                return NotFound("Invalid Url");
+            }   
+
+            var user = await userManager.FindByIdAsync(UserId);
+            if(user == null)
+            {
+                return NotFound("Invalid User");
+            }
+
+            var result = await userManager.ConfirmEmailAsync(user, Token);
+            if (result.Succeeded)
+            {
+                return Ok("Account is confirmed");
+            }
+
+            return BadRequest("Something went wrong");
         }
 
     }
